@@ -12,7 +12,8 @@ public class PlayerMove : MonoBehaviour
     private Vector2 endTouchPos;
     private bool stopTouuch = false;
 
-    public float swipeRange;
+    public float swipeRangeS;
+    public float swipeRangeL;
     //public float smallJumpRange;
     //public float largeJumpRange;
     public float tapRange;
@@ -53,6 +54,7 @@ public class PlayerMove : MonoBehaviour
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
             startTouchPos = Input.GetTouch(0).position;
+            Debug.Log(Input.GetTouch(0).position.y);
         }
 
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved)
@@ -62,6 +64,7 @@ public class PlayerMove : MonoBehaviour
 
             if (!stopTouuch)
             {
+                /*
                 if (Distance.y > (swipeRange * 2))
                 {
                     Debug.Log("pulo duplo");
@@ -94,6 +97,7 @@ public class PlayerMove : MonoBehaviour
                     //rb.velocity = Vector2.up * 3;
                     varR++;
                 }
+                //*/
             }
         }
 
@@ -103,10 +107,44 @@ public class PlayerMove : MonoBehaviour
             endTouchPos = Input.GetTouch(0).position;
             Vector2 Distance = endTouchPos - startTouchPos;
 
+            Debug.Log(Distance.y);
+
             if(Mathf.Abs(Distance.x) < tapRange && Mathf.Abs(Distance.y) < tapRange)
             {
                 Debug.Log("Toque");
                 txt.text = "AAAAAAAAA";
+            }
+            if (Distance.y > swipeRangeL)
+            {
+                Debug.Log("pulo duplo");
+                stopTouuch = true;
+                //transform.position += (Vector3)Vector2.up*4;
+                rb.velocity = Vector2.up * 6;
+                varPA++;
+            }
+            else if (Distance.y > swipeRangeS && Distance.y < swipeRangeL)
+            {
+                Debug.Log("pulou");
+                stopTouuch = true;
+                //transform.position += (Vector3)Vector2.up;
+                rb.velocity = Vector2.up * 3;
+                varPN++;
+            }
+            else if (Distance.y < -swipeRangeS && Distance.y > -swipeRangeL)
+            {
+                Debug.Log("abaixou");
+                stopTouuch = true;
+                //transform.position += (Vector3)Vector2.up;
+                //rb.velocity = Vector2.up * 3;
+                varA++;
+            }
+            else if (Distance.y < -swipeRangeL)
+            {
+                Debug.Log("rolou");
+                stopTouuch = true;
+                //transform.position += (Vector3)Vector2.up;
+                //rb.velocity = Vector2.up * 3;
+                varR++;
             }
         }
     }

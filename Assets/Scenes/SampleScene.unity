@@ -800,7 +800,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 71.7
+  m_fontSize: 24.65
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -944,8 +944,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f650cd4ea22f6a48b3c8691ef383d7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  swipeRange: 50
-  tapRange: 10
+  swipeRangeS: 20
+  swipeRangeL: 650
+  tapRange: 15
   txt: {fileID: 265176455}
 --- !u!1 &1818172109
 GameObject:
