@@ -45,6 +45,7 @@ public class PlayerMove : MonoBehaviour
         varA = 0;
         varR = 0;
         varEA = 0;
+        transform.position = new(-1.86f, -2.87f, 1);
     }
 
     public void TextMeshProGUI()
