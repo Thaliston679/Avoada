@@ -24,6 +24,9 @@ public class PlayerMove : MonoBehaviour
 
     private int varPN, varPA, varA, varR, varEA;
 
+    public float jumpForce;
+    public float multiplicador;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -119,7 +122,7 @@ public class PlayerMove : MonoBehaviour
                 Debug.Log("pulo duplo");
                 stopTouuch = true;
                 //transform.position += (Vector3)Vector2.up*4;
-                rb.velocity = Vector2.up * 6;
+                rb.velocity = Vector2.up * (jumpForce * multiplicador);
                 varPA++;
             }
             else if (Distance.y > swipeRangeS && Distance.y < swipeRangeL)
@@ -127,7 +130,7 @@ public class PlayerMove : MonoBehaviour
                 Debug.Log("pulou");
                 stopTouuch = true;
                 //transform.position += (Vector3)Vector2.up;
-                rb.velocity = Vector2.up * 3;
+                rb.velocity = Vector2.up * jumpForce;
                 varPN++;
             }
             else if (Distance.y < -swipeRangeS && Distance.y > -swipeRangeL)
