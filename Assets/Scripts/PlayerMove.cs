@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
 using UnityEngine.UI;
 using TMPro;
 
@@ -27,15 +27,69 @@ public class PlayerMove : MonoBehaviour
     public float jumpForce;
     public float multiplicador;
 
+    public bool condicao = false;
+
+    List<float> numbers = new List<float>() {-3f, 0, 3};
+
+    public GameObject inimigoObj;
+
+    private GameObject currentPlat;
+    [SerializeField] private BoxCollider2D playerCol;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        condicao = true;
     }
 
     private void Update()
     {
         Swipe();
         TextMeshProGUI();
+        if (condicao)
+        {
+            StartCoroutine(Aaaa());
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("platform"))
+        {
+            currentPlat = collision.gameObject;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("platform"))
+        {
+            currentPlat = null;
+        }
+    }
+
+    private IEnumerator DisableColPlat()
+    {
+        BoxCollider2D platCol = currentPlat.GetComponent<BoxCollider2D>();
+        Physics2D.IgnoreCollision(playerCol, platCol);
+        yield return new WaitForSeconds(0.25f);
+        Physics2D.IgnoreCollision(playerCol, platCol, false);
+    }
+
+    IEnumerator Aaaa()
+    {
+        condicao = false;
+
+        int rnd = Random.Range(0, 3);
+        float a = numbers[rnd];
+
+        Instantiate(inimigoObj, new(5, a, 0), Quaternion.identity);
+
+        yield return new WaitForSeconds(0.5f);
+        Debug.Log("Entrou");
+        yield return new WaitForSeconds(0.5f);
+        condicao = true;
+        Debug.Log("Saiu");
     }
 
     public void ResetTxt()
@@ -149,6 +203,11 @@ public class PlayerMove : MonoBehaviour
                 //transform.position += (Vector3)Vector2.up;
                 //rb.velocity = Vector2.up * 3;
                 varR++;
+
+                if(currentPlat != null)
+                {
+                    StartCoroutine(DisableColPlat());
+                }
             }
         }
     }
