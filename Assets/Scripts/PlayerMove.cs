@@ -12,8 +12,8 @@ public class PlayerMove : MonoBehaviour
     private Vector2 endTouchPos;
     private bool stopTouuch = false;
 
-    public float swipeRangeS;
-    public float swipeRangeL;
+    private float swipeRangeS;
+    private float swipeRangeL;
     //public float smallJumpRange;
     //public float largeJumpRange;
     public float tapRange;
@@ -22,7 +22,7 @@ public class PlayerMove : MonoBehaviour
 
     public TextMeshProUGUI txt;
 
-    private int varPN, varPA, varA, varR, varEA;
+    private int varPN, varPA, varA, varR, varB, varC;
 
     public float jumpForce;
     public float multiplicador;
@@ -30,16 +30,27 @@ public class PlayerMove : MonoBehaviour
     public bool condicao = false;
 
     List<float> numbers = new List<float>() {-3f, 0, 3};
+    List<float> coins = new List<float>() { -2.5f, -1.5f, 0.5f, 1.5f, 3.5f };
 
     public GameObject inimigoObj;
+    public GameObject coinsObj;
 
     private GameObject currentPlat;
     [SerializeField] private BoxCollider2D playerCol;
+
+    public GameObject cam;
+    private Animator camAnim;
+
+    private int screenHeight;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         condicao = true;
+        camAnim = cam.GetComponent<Animator>();
+        screenHeight = Screen.height;
+        swipeRangeL = screenHeight * 0.25f;
+        swipeRangeS = screenHeight * 0.05f;
     }
 
     private void Update()
@@ -68,6 +79,22 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            varB++;
+            camAnim.SetTrigger("shake");
+        }
+
+        if (collision.gameObject.CompareTag("Coins"))
+        {
+            varC++;
+            Destroy(collision.gameObject);
+            float a = Screen.width;
+        }
+    }
+
     private IEnumerator DisableColPlat()
     {
         BoxCollider2D platCol = currentPlat.GetComponent<BoxCollider2D>();
@@ -83,11 +110,27 @@ public class PlayerMove : MonoBehaviour
         int rnd = Random.Range(0, 3);
         float a = numbers[rnd];
 
+        int rnd2 = Random.Range(0, 3);
+        float a2 = numbers[rnd2];
+
+        if(rnd != rnd2)
+        {
+            Instantiate(inimigoObj, new(5, a2, 0), Quaternion.identity);
+        }
+
         Instantiate(inimigoObj, new(5, a, 0), Quaternion.identity);
 
         yield return new WaitForSeconds(0.5f);
         Debug.Log("Entrou");
-        yield return new WaitForSeconds(0.5f);
+
+        int rndC = Random.Range(0, 5);
+        float aC = coins[rndC];
+
+        Instantiate(coinsObj, new(5, aC, 0), Quaternion.identity);
+
+        float rndS = Random.Range(0.5f, 2);
+
+        yield return new WaitForSeconds(rndS);
         condicao = true;
         Debug.Log("Saiu");
     }
@@ -98,13 +141,14 @@ public class PlayerMove : MonoBehaviour
         varPA = 0;
         varA = 0;
         varR = 0;
-        varEA = 0;
+        varB = 0;
+        varC = 0;
         transform.position = new(-1.86f, -2.87f, 1);
     }
 
     public void TextMeshProGUI()
     {
-        txt.text = "Pulo normal: " + varPN + "\nPulo alto: " + varPA + "\nAbaixar: " + varA + "\nRolar: " + varR;
+        txt.text = "Pulo normal: " + varPN + "\nPulo alto: " + varPA + "\nAbaixar: " + varA + "\nRolar: " + varR + "\nBateu: " + varB + "\nMoedas: " + varC;
     }
 
     public void Swipe()
