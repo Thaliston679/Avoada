@@ -41,13 +41,18 @@ public class PlayerMove : MonoBehaviour
     public GameObject cam;
     private Animator camAnim;
 
+    private Animator playerAnim;
+
     private int screenHeight;
+
+    private bool isGrounded;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         condicao = true;
         camAnim = cam.GetComponent<Animator>();
+        playerAnim = GetComponent<Animator>();
         screenHeight = Screen.height;
         swipeRangeL = screenHeight * 0.25f;
         swipeRangeS = screenHeight * 0.05f;
@@ -69,6 +74,11 @@ public class PlayerMove : MonoBehaviour
         {
             currentPlat = collision.gameObject;
         }
+
+        if (collision.gameObject.CompareTag("platform") || collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -76,6 +86,11 @@ public class PlayerMove : MonoBehaviour
         if (collision.gameObject.CompareTag("platform"))
         {
             currentPlat = null;
+        }
+
+        if (collision.gameObject.CompareTag("platform") || collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = false;
         }
     }
 
@@ -85,6 +100,7 @@ public class PlayerMove : MonoBehaviour
         {
             varB++;
             camAnim.SetTrigger("shake");
+            Handheld.Vibrate();
         }
 
         if (collision.gameObject.CompareTag("Coins"))
@@ -148,10 +164,66 @@ public class PlayerMove : MonoBehaviour
 
     public void TextMeshProGUI()
     {
-        txt.text = "Pulo normal: " + varPN + "\nPulo alto: " + varPA + "\nAbaixar: " + varA + "\nRolar: " + varR + "\nBateu: " + varB + "\nMoedas: " + varC;
+        txt.text = "Pulo normal: " + varPN + "\nPulo alto: " + varPA + "\nRolar: " + varA + "\nDescer: " + varR + "\nBateu: " + varB + "\nMoedas: " + varC;
+        //txt.text = "Pulo normal: " + varPN + "\nPulo alto: " + varPA + "\nAbaixar: " + varA + "\nRolar: " + varR + "\nBateu: " + varB + "\nMoedas: " + varC;
+    }
+    
+    public void Swipe()
+    {
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+        {
+            startTouchPos = Input.GetTouch(0).position;
+            Debug.Log(Input.GetTouch(0).position.y);
+        }
+
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved)
+        {
+            currentTouchPos = Input.GetTouch(0).position;
+            Vector2 Distance = currentTouchPos - startTouchPos;
+        }
+
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
+        {
+            stopTouuch = false;
+            endTouchPos = Input.GetTouch(0).position;
+            Vector2 Distance = endTouchPos - startTouchPos;
+
+            Debug.Log(Distance.y);
+
+            if((Mathf.Abs(Distance.x) < tapRange && Mathf.Abs(Distance.y) < tapRange) && isGrounded == true)//Toque = pulo
+            {
+                stopTouuch = true;
+                rb.velocity = Vector2.up * jumpForce;
+                varPN++;
+            }
+            if ((Distance.y > swipeRangeS) && isGrounded == true)//Swipe Up = pulo alto 
+            {
+                stopTouuch = true;
+                rb.velocity = Vector2.up * (jumpForce * multiplicador);
+                varPA++;
+            }
+            else if ((Distance.y < -swipeRangeS && currentPlat == null) && isGrounded == true)//Swipe Down (no chao) = rolar
+            {
+                stopTouuch = true;
+                varA++;
+
+                playerAnim.SetTrigger("Roll");
+            }
+            else if ((Distance.y < -swipeRangeS && currentPlat != null) && isGrounded == true)//Swipe Down (na plataforma) = descer
+            {
+                stopTouuch = true;
+                varR++;
+
+                if(currentPlat != null)
+                {
+                    StartCoroutine(DisableColPlat());
+                    rb.velocity = -Vector2.up * jumpForce;
+                }
+            }
+        }
     }
 
-    public void Swipe()
+    public void Swipe1()
     {
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
@@ -211,7 +283,7 @@ public class PlayerMove : MonoBehaviour
 
             Debug.Log(Distance.y);
 
-            if(Mathf.Abs(Distance.x) < tapRange && Mathf.Abs(Distance.y) < tapRange)
+            if (Mathf.Abs(Distance.x) < tapRange && Mathf.Abs(Distance.y) < tapRange)
             {
                 Debug.Log("Toque");
                 txt.text = "AAAAAAAAA";
@@ -239,6 +311,7 @@ public class PlayerMove : MonoBehaviour
                 //transform.position += (Vector3)Vector2.up;
                 //rb.velocity = Vector2.up * 3;
                 varA++;
+                playerAnim.SetTrigger("Roll");
             }
             else if (Distance.y < -swipeRangeL)
             {
@@ -248,14 +321,14 @@ public class PlayerMove : MonoBehaviour
                 //rb.velocity = Vector2.up * 3;
                 varR++;
 
-                if(currentPlat != null)
+                if (currentPlat != null)
                 {
                     StartCoroutine(DisableColPlat());
                 }
             }
         }
     }
-    
+
 
     /* Método 2 (Menos complexo mas com menos informações)
     private void Update()
