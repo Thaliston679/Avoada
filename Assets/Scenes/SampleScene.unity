@@ -1317,6 +1317,7 @@ MonoBehaviour:
   condicao: 0
   inimigoObj: {fileID: 5157133036594077020, guid: 6abd5799c6a3fb2459db6fee36737d95, type: 3}
   coinsObj: {fileID: 4187082989388814546, guid: 043abbe6ba7af0b4494fe690894108b4, type: 3}
+  coinsEffect: {fileID: 2805097847971497209, guid: 12ed16d1c4cf00e44befa30179ff255a, type: 3}
   playerCol: {fileID: 1109065655}
   cam: {fileID: 519420028}
 --- !u!95 &1109065659
@@ -1521,7 +1522,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -10
+  m_SortingOrder: -20
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.101960786, g: 0.101960786, b: 0.101960786, a: 1}
   m_FlipX: 0

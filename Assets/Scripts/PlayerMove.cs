@@ -34,6 +34,7 @@ public class PlayerMove : MonoBehaviour
 
     public GameObject inimigoObj;
     public GameObject coinsObj;
+    public GameObject coinsEffect;
 
     private GameObject currentPlat;
     [SerializeField] private BoxCollider2D playerCol;
@@ -49,6 +50,7 @@ public class PlayerMove : MonoBehaviour
 
     private void Start()
     {
+        Time.timeScale = 0.9f;
         rb = GetComponent<Rigidbody2D>();
         condicao = true;
         camAnim = cam.GetComponent<Animator>();
@@ -66,6 +68,8 @@ public class PlayerMove : MonoBehaviour
         {
             StartCoroutine(Aaaa());
         }
+
+        Time.timeScale += 0.001f * Time.deltaTime;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -107,6 +111,9 @@ public class PlayerMove : MonoBehaviour
         {
             varC++;
             Destroy(collision.gameObject);
+            GameObject moedaEfeito = Instantiate(coinsEffect, collision.gameObject.transform.position, Quaternion.identity);
+            Destroy(moedaEfeito, 0.5f);
+
             float a = Screen.width;
         }
     }
@@ -164,7 +171,7 @@ public class PlayerMove : MonoBehaviour
 
     public void TextMeshProGUI()
     {
-        txt.text = "Pulo normal: " + varPN + "\nPulo alto: " + varPA + "\nRolar: " + varA + "\nDescer: " + varR + "\nBateu: " + varB + "\nMoedas: " + varC;
+        txt.text = "Pulo normal: " + varPN + "\nPulo alto: " + varPA + "\nRolar: " + varA + "\nDescer: " + varR + "\nBateu: " + varB + "\nMoedas: " + varC + "\nVelocidade: " + Time.timeScale;
         //txt.text = "Pulo normal: " + varPN + "\nPulo alto: " + varPA + "\nAbaixar: " + varA + "\nRolar: " + varR + "\nBateu: " + varB + "\nMoedas: " + varC;
     }
     
