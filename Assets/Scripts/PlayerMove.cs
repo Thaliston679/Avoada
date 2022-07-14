@@ -29,7 +29,7 @@ public class PlayerMove : MonoBehaviour
 
     public bool condicao = false;
 
-    List<float> numbers = new List<float>() {-3f, 0, 3};
+    List<float> numbers = new List<float>() {-3f, 0, 3, -2.1f};
     List<float> coins = new List<float>() { -2.5f, -1.5f, 0.5f, 1.5f, 3.5f };
 
     public GameObject inimigoObj;
@@ -130,10 +130,10 @@ public class PlayerMove : MonoBehaviour
     {
         condicao = false;
 
-        int rnd = Random.Range(0, 3);
+        int rnd = Random.Range(0, 4);
         float a = numbers[rnd];
 
-        int rnd2 = Random.Range(0, 3);
+        int rnd2 = Random.Range(0, 4);
         float a2 = numbers[rnd2];
 
         if(rnd != rnd2)
